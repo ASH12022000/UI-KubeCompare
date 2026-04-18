@@ -1,0 +1,34 @@
+<div class="glass-card overflow-hidden border-none">
+  <!-- Header -->
+  <div class="grid grid-cols-2 bg-white/5 border-b border-white/10">
+    <div class="p-4 flex items-center gap-2 border-r border-white/10">
+      <div class="w-2 h-2 rounded-full bg-brand-500"></div>
+      <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Cluster 1 Specification</span>
+    </div>
+    <div class="p-4 flex items-center gap-2">
+      <div class="w-2 h-2 rounded-full bg-green-500"></div>
+      <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Cluster 2 Specification</span>
+    </div>
+  </div>
+
+  <!-- Diff Content -->
+  <div class="max-h-[600px] overflow-auto font-mono text-[13px] leading-relaxed custom-scrollbar">
+    <div *ngFor="let line of diffLines" 
+         class="grid grid-cols-2 border-b border-white/5 group hover:bg-white/5 transition-colors">
+      
+      <!-- Left Side -->
+      <div class="p-1 px-4 border-r border-white/10 whitespace-pre overflow-hidden text-ellipsis"
+           [ngClass]="{'bg-red-500/10 text-red-300': !line.match && line.cluster1}">
+        <span class="text-gray-600 inline-block w-8 select-none text-right mr-4">{{diffLines.indexOf(line) + 1}}</span>
+        {{line.cluster1 || ' '}}
+      </div>
+
+      <!-- Right Side -->
+      <div class="p-1 px-4 whitespace-pre overflow-hidden text-ellipsis"
+           [ngClass]="{'bg-green-500/10 text-green-300': !line.match && line.cluster2}">
+        <span class="text-gray-600 inline-block w-8 select-none text-right mr-4">{{diffLines.indexOf(line) + 1}}</span>
+        {{line.cluster2 || ' '}}
+      </div>
+    </div>
+  </div>
+</div>

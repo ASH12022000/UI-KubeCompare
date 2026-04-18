@@ -1,0 +1,66 @@
+{
+  "history": [
+    {
+      "id": "mock-hist-001",
+      "userId": "mock-user-1",
+      "timestamp": "2026-04-18T12:00:00Z",
+      "primaryClusterUrl": "jump://10.10.0.1",
+      "comparisonClusterUrl": "jump://10.10.0.2",
+      "primaryNamespace": "production",
+      "comparisonNamespace": "staging",
+      "status": "SUCCESS"
+    },
+    {
+      "id": "mock-hist-002",
+      "userId": "mock-user-1",
+      "timestamp": "2026-04-17T09:30:00Z",
+      "primaryClusterUrl": "jump://10.10.0.1",
+      "comparisonClusterUrl": "jump://10.10.0.3",
+      "primaryNamespace": "production",
+      "comparisonNamespace": "qa",
+      "status": "SUCCESS"
+    },
+    {
+      "id": "mock-hist-003",
+      "userId": "mock-user-1",
+      "timestamp": "2026-04-16T15:45:00Z",
+      "primaryClusterUrl": "https://k8s-prod.internal",
+      "comparisonClusterUrl": "https://k8s-dr.internal",
+      "primaryNamespace": "default",
+      "comparisonNamespace": "default",
+      "status": "ERROR"
+    }
+  ],
+  "baselines": [
+    {
+      "id": "mock-base-001",
+      "userId": "mock-user-1",
+      "name": "Production Baseline — Apr 2026",
+      "jumpHost": "10.10.0.1",
+      "jumpUser": "deploy",
+      "namespace": "production",
+      "timestamp": "2026-04-15T08:00:00Z",
+      "environmentId": "10.10.0.1:production"
+    },
+    {
+      "id": "mock-base-002",
+      "userId": "mock-user-1",
+      "name": "Staging Baseline — Apr 2026",
+      "jumpHost": "10.10.0.2",
+      "jumpUser": "deploy",
+      "namespace": "staging",
+      "timestamp": "2026-04-15T08:30:00Z",
+      "environmentId": "10.10.0.2:staging"
+    },
+    {
+      "id": "mock-base-003",
+      "userId": "mock-user-1",
+      "name": "QA Baseline — Mar 2026",
+      "jumpHost": "10.10.0.3",
+      "jumpUser": "admin",
+      "namespace": "qa",
+      "timestamp": "2026-03-30T11:00:00Z",
+      "environmentId": "10.10.0.3:qa"
+    }
+  ]
+}

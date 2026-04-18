@@ -1,84 +1,69 @@
-/* Design System: Rich Aesthetics */
+@import 'ngx-toastr/toastr';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
-  --primary: #6366f1;
-  --primary-hover: #4f46e5;
-  --secondary: #10b981;
-  --bg-dark: #0f172a;
-  --card-bg: #1e293b;
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --border: #334155;
+  --glass-bg: rgba(18, 18, 18, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
 }
 
 body {
-  margin: 0;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: var(--bg-dark);
-  color: var(--text-main);
+  @apply bg-dark-900 text-white font-sans antialiased;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.15) 0, transparent 50%), 
+    radial-gradient(at 100% 100%, rgba(2, 132, 199, 0.1) 0, transparent 50%);
+  min-height: 100vh;
 }
 
-.glass {
-  background: rgba(30, 41, 59, 0.7);
+.glass-card {
+  background: var(--glass-bg);
   backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  @apply rounded-2xl shadow-2xl;
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  @apply rounded-xl px-4 py-3 text-white outline-none focus:border-brand-500 transition-all;
+}
+
+.glass-input-icon {
+  background: rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid var(--glass-border);
+  border-radius: 0.75rem;
+  color: white !important;
+  padding-left: 3rem !important;
+  @apply py-3 outline-none focus:border-brand-500 transition-all;
+}
+
+.ng-invalid.ng-touched {
+  border-color: rgba(239, 68, 68, 0.5) !important;
+  @apply focus:border-red-500;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
-  color: white;
-  padding: 10px 20px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  font-weight: 600;
+  @apply bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-xl px-6 py-3 transition-all transform active:scale-95 shadow-lg shadow-brand-500/20;
 }
 
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+/* Fix for Chrome Autofill */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: white !important;
+  -webkit-box-shadow: 0 0 0px 1000px rgba(0,0,0,0.5) inset !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
-.input-field {
-  background: var(--bg-dark);
-  border: 1px solid var(--border);
-  color: white;
-  padding: 12px;
-  border-radius: 8px;
-  width: 100%;
-  margin-bottom: 16px;
-  transition: border-color 0.2s;
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.input-field:focus {
-  outline: none;
-  border-color: var(--primary);
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
 }
-
-.stepper-item {
-  flex: 1;
-  text-align: center;
-  position: relative;
-  padding: 10px;
-  color: var(--text-muted);
-}
-
-.stepper-item.active {
-  color: var(--primary);
-  font-weight: bold;
-}
-
-.diff-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.diff-table td, .diff-table th {
-  padding: 12px;
-  border-bottom: 1px solid var(--border);
-}
-
-.match { color: var(--secondary); }
-.missing { color: #f43f5e; }
-.different { color: #f59e0b; }

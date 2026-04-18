@@ -1,0 +1,190 @@
+<div class="space-y-6">
+
+  <!-- Page Header -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 bg-brand-500/10 rounded-xl flex items-center justify-center border border-brand-500/20">
+        <lucide-angular [img]="icons.Database" class="w-6 h-6 text-brand-500"></lucide-angular>
+      </div>
+      <div>
+        <h1 class="text-3xl font-bold">Golden Baselines</h1>
+        <p class="text-gray-400">Capture and compare cluster configuration snapshots</p>
+      </div>
+    </div>
+    <button (click)="openForm()" class="btn-primary flex items-center gap-2">
+      <lucide-angular [img]="icons.Plus" class="w-5 h-5"></lucide-angular>
+      Add Baseline
+    </button>
+  </div>
+
+  <!-- Baselines List -->
+  <div class="glass-card overflow-hidden">
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="p-12 flex flex-col items-center gap-3 text-gray-400">
+      <lucide-angular [img]="icons.Loader2" class="w-8 h-8 animate-spin text-brand-500"></lucide-angular>
+      <p>Loading baselines...</p>
+    </div>
+
+    <!-- Empty -->
+    <div *ngIf="!isLoading && baselines.length === 0" class="p-16 flex flex-col items-center gap-3 text-gray-500">
+      <div class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-2">
+        <lucide-angular [img]="icons.Database" class="w-8 h-8 opacity-40"></lucide-angular>
+      </div>
+      <p class="text-lg font-medium text-white">No Baselines Yet</p>
+      <p class="text-sm">Click "Add Baseline" to capture your first cluster snapshot.</p>
+    </div>
+
+    <!-- Table -->
+    <table *ngIf="!isLoading && baselines.length > 0" class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-dark-800/50 border-b border-white/10 text-xs uppercase tracking-wider text-gray-400">
+          <th class="p-4">Name</th>
+          <th class="p-4">Jump Host</th>
+          <th class="p-4">Namespace</th>
+          <th class="p-4">Captured At</th>
+          <th class="p-4 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-white/5">
+        <tr *ngFor="let b of baselines" class="hover:bg-white/5 transition-colors group">
+          <td class="p-4">
+            <div class="flex items-center gap-2">
+              <lucide-angular [img]="icons.Server" class="w-4 h-4 text-brand-500"></lucide-angular>
+              <span class="font-semibold text-white">{{b.name}}</span>
+            </div>
+          </td>
+          <td class="p-4 text-sm text-gray-300">{{b.jumpHost || b.clusterUrl || '—'}}</td>
+          <td class="p-4">
+            <span class="px-2 py-1 text-xs rounded bg-white/10 border border-white/5 text-gray-300">{{b.namespace}}</span>
+          </td>
+          <td class="p-4">
+            <div class="flex items-center gap-2 text-sm text-gray-400">
+              <lucide-angular [img]="icons.Clock" class="w-4 h-4"></lucide-angular>
+              {{b.timestamp | date:'medium'}}
+            </div>
+          </td>
+          <td class="p-4">
+            <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button (click)="onCompare(b)" [disabled]="isComparing && comparingId === b.id"
+                      class="px-3 py-1.5 rounded-lg bg-brand-500/10 text-brand-500 hover:bg-brand-500 hover:text-white transition-all flex items-center gap-1.5 text-xs font-semibold">
+                <lucide-angular *ngIf="!(isComparing && comparingId === b.id)" [img]="icons.Play" class="w-4 h-4"></lucide-angular>
+                <span *ngIf="isComparing && comparingId === b.id" class="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
+                Compare
+              </button>
+              <button (click)="onDelete(b.id)"
+                      class="p-2 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all">
+                <lucide-angular [img]="icons.Trash2" class="w-4 h-4"></lucide-angular>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===================== SLIDE-IN PANEL ===================== -->
+<div *ngIf="showForm" class="fixed inset-0 z-50 flex">
+  <!-- Backdrop -->
+  <div class="flex-1 bg-black/60 backdrop-blur-sm" (click)="closeForm()"></div>
+
+  <!-- Panel -->
+  <div class="w-full max-w-md bg-dark-900 border-l border-white/10 h-full overflow-y-auto p-8 flex flex-col gap-6 animate-fade-in" style="background: #0d1117;">
+
+    <!-- Panel Header -->
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-xl font-bold">New Baseline</h2>
+        <p class="text-sm text-gray-400 mt-1">Capture a cluster configuration snapshot</p>
+      </div>
+      <button (click)="closeForm()" class="p-2 hover:bg-white/10 rounded-lg transition-colors">
+        <lucide-angular [img]="icons.X" class="w-5 h-5 text-gray-400"></lucide-angular>
+      </button>
+    </div>
+
+    <!-- Conflict Banner -->
+    <div *ngIf="conflict" class="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl space-y-3 animate-fade-in">
+      <p class="text-sm font-semibold text-yellow-400">⚠ Baseline Already Exists</p>
+      <p class="text-xs text-gray-300">
+        A baseline named <strong class="text-white">"{{conflict.existingName}}"</strong>
+        already exists for this environment.
+      </p>
+      <div class="flex gap-3">
+        <button (click)="onOverride()" [disabled]="isSaving"
+                class="flex-1 py-2 rounded-lg bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500 hover:text-black font-semibold text-sm transition-all">
+          Override
+        </button>
+        <button (click)="closeForm()"
+                class="flex-1 py-2 rounded-lg bg-white/5 text-gray-300 hover:bg-white/10 font-semibold text-sm transition-all">
+          Cancel
+        </button>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="baselineForm" (ngSubmit)="onSubmit()" class="space-y-5 flex-1">
+
+      <div>
+        <label class="block text-sm text-gray-400 mb-2">Baseline Name <span class="text-red-400">*</span></label>
+        <input type="text" formControlName="name" class="glass-input w-full" placeholder="e.g. Dev Cluster Baseline">
+        <p *ngIf="baselineForm.get('name')?.invalid && baselineForm.get('name')?.touched" class="text-xs text-red-400 mt-1">Name is required.</p>
+      </div>
+
+      <div class="border-t border-white/10 pt-4">
+        <p class="text-xs uppercase tracking-widest text-gray-500 font-bold mb-4">Jump Server Details</p>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm text-gray-400 mb-2">Jump Host <span class="text-red-400">*</span></label>
+            <input type="text" formControlName="jumpHost" class="glass-input w-full" placeholder="10.0.0.1">
+            <p *ngIf="baselineForm.get('jumpHost')?.invalid && baselineForm.get('jumpHost')?.touched" class="text-xs text-red-400 mt-1">Jump host is required.</p>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm text-gray-400 mb-2">SSH User <span class="text-red-400">*</span></label>
+              <input type="text" formControlName="jumpUser" class="glass-input w-full" placeholder="root">
+              <p *ngIf="baselineForm.get('jumpUser')?.invalid && baselineForm.get('jumpUser')?.touched" class="text-xs text-red-400 mt-1">Required.</p>
+            </div>
+            <div>
+              <label class="block text-sm text-gray-400 mb-2">SSH Password <span class="text-red-400">*</span></label>
+              <input type="password" formControlName="jumpPassword" class="glass-input w-full" placeholder="••••••">
+              <p *ngIf="baselineForm.get('jumpPassword')?.invalid && baselineForm.get('jumpPassword')?.touched" class="text-xs text-red-400 mt-1">Required.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t border-white/10 pt-4">
+        <label class="block text-sm text-gray-400 mb-2">Namespace <span class="text-red-400">*</span></label>
+        <input type="text" formControlName="namespace" class="glass-input w-full" placeholder="default">
+        <p *ngIf="baselineForm.get('namespace')?.invalid && baselineForm.get('namespace')?.touched" class="text-xs text-red-400 mt-1">Namespace is required.</p>
+      </div>
+
+      <div class="border-t border-white/10 pt-4">
+        <p class="text-xs uppercase tracking-widest text-gray-500 font-bold mb-4">Resources to Capture</p>
+        <div formGroupName="checks" class="grid grid-cols-2 gap-3">
+          <label *ngFor="let check of [
+            { key: 'DEPLOYMENTS',     label: 'Deployments' },
+            { key: 'CONFIGMAPS',      label: 'Config Maps' },
+            { key: 'SERVICES',        label: 'Services' },
+            { key: 'PVC',             label: 'PVCs' },
+            { key: 'IMAGES',          label: 'Images' },
+            { key: 'VIRTUALSERVICES', label: 'Virtual Services' },
+            { key: 'AUTH_POLICY',     label: 'Auth Policies' }
+          ]" class="flex items-center gap-3 p-3 rounded-xl border border-white/10 hover:bg-white/5 cursor-pointer transition-all">
+            <input type="checkbox" [formControlName]="check.key" class="rounded text-brand-500">
+            <span class="text-sm font-medium">{{check.label}}</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="pt-4">
+        <button type="submit" [disabled]="isSaving" class="btn-primary w-full flex items-center justify-center gap-2">
+          <span *ngIf="!isSaving">Capture Baseline</span>
+          <span *ngIf="isSaving" class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

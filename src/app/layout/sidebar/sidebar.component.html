@@ -1,0 +1,31 @@
+<aside class="w-72 h-screen flex flex-col p-6 sticky top-0 border-r border-white/10 bg-dark-900/50 backdrop-blur-xl">
+  <!-- Logo -->
+  <div class="flex items-center gap-3 px-4 mb-10">
+    <div class="w-10 h-10 bg-brand-500 rounded-xl flex items-center justify-center shadow-lg shadow-brand-500/20">
+      <lucide-angular [img]="icons['Zap']" class="w-6 h-6 text-white"></lucide-angular>
+    </div>
+    <div>
+      <h2 class="font-bold text-lg leading-tight">KubCompare</h2>
+      <span class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Enterprise v1.0</span>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="flex-1 space-y-2">
+    <a *ngFor="let item of navItems" 
+       [routerLink]="item.path" 
+       routerLinkActive="bg-brand-500/10 text-brand-500 border-brand-500/30"
+       class="flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all border border-transparent group">
+      <lucide-angular [img]="icons[item.icon]" class="w-5 h-5 group-hover:scale-110 transition-transform"></lucide-angular>
+      <span class="font-medium">{{item.label}}</span>
+    </a>
+  </nav>
+
+  <!-- Bottom Actions -->
+  <div class="pt-6 border-t border-white/10 space-y-2">
+    <button (click)="onLogout()" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all group">
+      <lucide-angular [img]="icons['LogOut']" class="w-5 h-5 group-hover:-translate-x-1 transition-transform"></lucide-angular>
+      <span class="font-medium">Sign Out</span>
+    </button>
+  </div>
+</aside>
