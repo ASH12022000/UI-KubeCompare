@@ -20,6 +20,40 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}/auth/verify`, data);
   }
 
+  // Settings / Profile
+  getProfile(): Observable<any> {
+    const userId = this.authStorage.getUserId();
+    return this.http.get(`${this.baseUrl}/auth/profile/${userId}`);
+  }
+
+  updateProfile(data: any): Observable<any> {
+    const userId = this.authStorage.getUserId();
+    return this.http.put(`${this.baseUrl}/auth/profile/${userId}`, data);
+  }
+
+  sendChangePasswordOtp(): Observable<any> {
+    const userId = this.authStorage.getUserId();
+    return this.http.post(`${this.baseUrl}/auth/send-change-password-otp`, { userId });
+  }
+
+  changePassword(data: any): Observable<any> {
+    const userId = this.authStorage.getUserId();
+    return this.http.post(`${this.baseUrl}/auth/change-password`, { ...data, userId });
+  }
+
+  deleteAccount(confirmEmail: string): Observable<any> {
+    const userId = this.authStorage.getUserId();
+    // Using http.delete with body in options
+    return this.http.delete(`${this.baseUrl}/auth/account/${userId}`, {
+      body: { confirmEmail }
+    });
+  }
+
+  reportBug(data: any): Observable<any> {
+    const userId = this.authStorage.getUserId();
+    return this.http.post(`${this.baseUrl}/auth/report-bug`, { ...data, userId });
+  }
+
   // Comparison
   testConnection(env: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/comparison/connect`, env);

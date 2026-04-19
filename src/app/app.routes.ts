@@ -38,6 +38,10 @@ export const routes: Routes = [
       {
         path: 'baselines',
         loadComponent: () => import('./baselines/baselines.component').then(m => m.BaselinesComponent)
+      },
+      {
+        path: 'settings',
+        loadComponent: () => import('./settings/settings.component').then(m => m.SettingsComponent)
       }
     ]
   },
