@@ -4,59 +4,106 @@
   <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-brand-600/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s"></div>
 
   <div class="w-full max-w-md animate-fade-in z-10">
-    <div class="glass-card p-8 text-center mb-6">
-      <div class="w-16 h-16 bg-brand-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-brand-500/20">
-        <lucide-angular [img]="icons.UserPlus" class="w-8 h-8 text-brand-500"></lucide-angular>
+
+    <!-- ===== STEP 1: Registration Form ===== -->
+    <ng-container *ngIf="step === 'register'">
+      <div class="glass-card p-8 text-center mb-6">
+        <div class="w-16 h-16 bg-brand-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-brand-500/20">
+          <lucide-angular [img]="icons.UserPlus" class="w-8 h-8 text-brand-500"></lucide-angular>
+        </div>
+        <h1 class="text-3xl font-bold mb-2">Create Account</h1>
+        <p class="text-gray-400">Join KubCompare Enterprise</p>
       </div>
-      <h1 class="text-3xl font-bold mb-2">Create Account</h1>
-      <p class="text-gray-400">Join KubCompare Enterprise</p>
-    </div>
 
-    <div class="glass-card p-8">
-      <form [formGroup]="signupForm" (ngSubmit)="onSignup()" class="space-y-5">
-        <div>
-          <label class="block text-sm font-medium text-gray-400 mb-2">Email Address</label>
-          <div class="relative flex items-center">
-            <span class="absolute left-4 z-10">
-              <lucide-angular [img]="icons.Mail" class="w-5 h-5 text-gray-500"></lucide-angular>
-            </span>
-            <input type="email" formControlName="email" class="glass-input-icon w-full" placeholder="name@company.com">
+      <div class="glass-card p-8">
+        <form [formGroup]="signupForm" (ngSubmit)="onSignup()" class="space-y-5">
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-2">Email Address</label>
+            <div class="relative flex items-center">
+              <span class="absolute left-4 z-10">
+                <lucide-angular [img]="icons.Mail" class="w-5 h-5 text-gray-500"></lucide-angular>
+              </span>
+              <input type="email" formControlName="email" class="glass-input-icon w-full" placeholder="name@company.com">
+            </div>
           </div>
-        </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-400 mb-2">Password</label>
-          <div class="relative flex items-center">
-            <span class="absolute left-4 z-10">
-              <lucide-angular [img]="icons.Lock" class="w-5 h-5 text-gray-500"></lucide-angular>
-            </span>
-            <input type="password" formControlName="password" class="glass-input-icon w-full" placeholder="••••••••">
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-2">Password</label>
+            <div class="relative flex items-center">
+              <span class="absolute left-4 z-10">
+                <lucide-angular [img]="icons.Lock" class="w-5 h-5 text-gray-500"></lucide-angular>
+              </span>
+              <input type="password" formControlName="password" class="glass-input-icon w-full" placeholder="••••••••">
+            </div>
           </div>
-        </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-400 mb-2">Confirm Password</label>
-          <div class="relative flex items-center">
-            <span class="absolute left-4 z-10">
-              <lucide-angular [img]="icons.ShieldCheck" class="w-5 h-5 text-gray-500"></lucide-angular>
-            </span>
-            <input type="password" formControlName="confirmPassword" class="glass-input-icon w-full" placeholder="••••••••">
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-2">Confirm Password</label>
+            <div class="relative flex items-center">
+              <span class="absolute left-4 z-10">
+                <lucide-angular [img]="icons.ShieldCheck" class="w-5 h-5 text-gray-500"></lucide-angular>
+              </span>
+              <input type="password" formControlName="confirmPassword" class="glass-input-icon w-full" placeholder="••••••••">
+            </div>
+            <p *ngIf="signupForm.errors?.['mismatch'] && signupForm.get('confirmPassword')?.touched" class="text-xs text-red-400 mt-2 ml-1 animate-fade-in">
+              Passwords do not match
+            </p>
           </div>
-          <p *ngIf="signupForm.errors?.['mismatch'] && signupForm.get('confirmPassword')?.touched" class="text-xs text-red-400 mt-2 ml-1 animate-fade-in">
-            Passwords do not match
-          </p>
-        </div>
 
-        <button type="submit" [disabled]="isLoading || signupForm.invalid" class="btn-primary w-full flex items-center justify-center gap-2 mt-2">
-          <span *ngIf="!isLoading">Register Account</span>
-          <span *ngIf="isLoading" class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-        </button>
-        
-        <button type="button" (click)="goToLogin()" class="w-full flex items-center justify-center gap-2 text-gray-500 hover:text-white text-sm transition-colors mt-4">
-          <lucide-angular [img]="icons.ArrowLeft" class="w-4 h-4"></lucide-angular>
-          Back to Sign In
-        </button>
-      </form>
-    </div>
+          <button type="submit" [disabled]="isLoading || signupForm.invalid" class="btn-primary w-full flex items-center justify-center gap-2 mt-2">
+            <span *ngIf="!isLoading">Register Account</span>
+            <span *ngIf="isLoading" class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+          </button>
+
+          <button type="button" (click)="goToLogin()" class="w-full flex items-center justify-center gap-2 text-gray-500 hover:text-white text-sm transition-colors mt-4">
+            <lucide-angular [img]="icons.ArrowLeft" class="w-4 h-4"></lucide-angular>
+            Back to Sign In
+          </button>
+        </form>
+      </div>
+    </ng-container>
+
+    <!-- ===== STEP 2: OTP Verification ===== -->
+    <ng-container *ngIf="step === 'otp'">
+      <div class="glass-card p-8 text-center mb-6">
+        <div class="w-16 h-16 bg-brand-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-brand-500/20">
+          <lucide-angular [img]="icons.KeyRound" class="w-8 h-8 text-brand-500"></lucide-angular>
+        </div>
+        <h1 class="text-2xl font-bold mb-2">Verify Your Email</h1>
+        <p class="text-gray-400 text-sm">We sent a 6-digit OTP to <strong class="text-white">{{signupForm.value.email}}</strong></p>
+      </div>
+
+      <div class="glass-card p-8">
+        <form [formGroup]="otpForm" (ngSubmit)="onVerifyOtp()" class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-2">Enter OTP</label>
+            <div class="relative flex items-center">
+              <span class="absolute left-4 z-10">
+                <lucide-angular [img]="icons.KeyRound" class="w-5 h-5 text-gray-500"></lucide-angular>
+              </span>
+              <input type="text" formControlName="otp" class="glass-input-icon w-full text-center tracking-[0.5em] text-xl font-mono" placeholder="000000" maxlength="6">
+            </div>
+            <p *ngIf="otpForm.get('otp')?.invalid && otpForm.get('otp')?.touched" class="text-xs text-red-400 mt-1 ml-1">Enter the 6-digit code from your email.</p>
+          </div>
+
+          <button type="submit" [disabled]="isLoading || otpForm.invalid" class="btn-primary w-full flex items-center justify-center gap-2">
+            <span *ngIf="!isLoading">Verify & Continue</span>
+            <span *ngIf="isLoading" class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+          </button>
+        </form>
+      </div>
+
+      <p class="text-center mt-6 text-gray-500 text-xs">
+        Didn't receive the email?
+        <button (click)="resendOtp()" [disabled]="isLoading"
+                class="text-brand-500 hover:underline font-medium ml-1">Resend OTP</button>
+      </p>
+      <p class="text-center mt-2 text-gray-500 text-xs">
+        Wrong email?
+        <button (click)="step = 'register'"
+                class="text-brand-500 hover:underline font-medium ml-1">Change email</button>
+      </p>
+    </ng-container>
+
   </div>
 </div>

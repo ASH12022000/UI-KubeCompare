@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { LucideAngularModule, Mail, Lock, ArrowLeft, KeyRound } from 'lucide-angular';
+import { hashPassword } from '../../utils/hash.util';
 
 @Component({
   selector: 'app-forgot-password',
@@ -55,11 +56,16 @@ export class ForgotPasswordComponent {
     });
   }
 
-  onResetPassword() {
+  async onResetPassword() {
     if (this.resetForm.invalid) { this.resetForm.markAllAsTouched(); return; }
     this.isLoading = true;
 
-    this.http.post(`${this.baseUrl}/reset-password`, this.resetForm.value).subscribe({
+    const hashedPwd = await hashPassword(this.resetForm.value.newPassword);
+    this.http.post(`${this.baseUrl}/reset-password`, {
+      email: this.resetForm.value.email,
+      token: this.resetForm.value.token,
+      newPassword: hashedPwd
+    }).subscribe({
       next: () => {
         this.isLoading = false;
         this.toastr.success('Password reset! Please log in.');

@@ -6,6 +6,7 @@ import { ApiService } from '../../services/api.service';
 import { AuthStorageService } from '../../services/auth-storage.service';
 import { ToastrService } from 'ngx-toastr';
 import { LucideAngularModule, LogIn, Mail, Lock, ShieldCheck } from 'lucide-angular';
+import { hashPassword } from '../../utils/hash.util';
 
 @Component({
   selector: 'app-login',
@@ -42,11 +43,12 @@ export class LoginComponent {
   goToSignup()        { this.router.navigate(['/signup']); }
   goToForgotPassword() { this.router.navigate(['/forgot-password']); }
 
-  onLogin() {
+  async onLogin() {
     if (this.loginForm.invalid) { this.loginForm.markAllAsTouched(); return; }
     this.isLoading = true;
 
-    this.api.login(this.loginForm.value).subscribe({
+    const hashedPwd = await hashPassword(this.loginForm.value.password);
+    this.api.login({ email: this.loginForm.value.email, password: hashedPwd }).subscribe({
       next: (res: { token: string; userId: string; email: string }) => {
         this.authStorage.setToken(res.token);
         this.authStorage.setUserId(res.userId ?? res.email);
