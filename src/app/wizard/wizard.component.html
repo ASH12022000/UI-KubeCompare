@@ -29,6 +29,10 @@
                   [class.bg-brand-500]="globalConnectionType === 'JUMP'"
                   [class.text-white]="globalConnectionType === 'JUMP'"
                   class="px-6 py-2 text-xs font-bold uppercase rounded-lg transition-all text-gray-500">Jump Server</button>
+          <button type="button" (click)="setConnectionType('KUBECONFIG')" 
+                  [class.bg-brand-500]="globalConnectionType === 'KUBECONFIG'"
+                  [class.text-white]="globalConnectionType === 'KUBECONFIG'"
+                  class="px-6 py-2 text-xs font-bold uppercase rounded-lg transition-all text-gray-500">KubeConfig</button>
         </div>
       </div>
       
@@ -66,6 +70,27 @@
               </div>
             </div>
           </div>
+
+          <!-- KubeConfig Section -->
+          <div *ngIf="globalConnectionType === 'KUBECONFIG'" class="space-y-6 animate-fade-in">
+            <div>
+              <label class="block text-sm text-gray-400 mb-2">Upload KubeConfig</label>
+              <div class="relative group">
+                <input type="file" (change)="onFileSelected($event, 'cluster1')" 
+                       class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                <div class="glass-card p-8 border-2 border-dashed border-white/10 group-hover:border-brand-500/50 transition-all flex flex-col items-center justify-center gap-4">
+                  <lucide-angular [img]="credentialsForm.get('cluster1.kubeconfig')?.value ? icons.FileCheck : icons.Upload" 
+                                 [class.text-green-500]="credentialsForm.get('cluster1.kubeconfig')?.value"
+                                 [class.text-brand-500]="!credentialsForm.get('cluster1.kubeconfig')?.value"
+                                 class="w-10 h-10"></lucide-angular>
+                  <div class="text-center">
+                    <p class="text-sm font-medium">{{credentialsForm.get('cluster1.kubeconfig')?.value ? 'File Loaded Successfully' : 'Click to upload or drag & drop'}}</p>
+                    <p class="text-xs text-gray-500 mt-1">YAML format supported</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Cluster 2 -->
@@ -98,6 +123,27 @@
               <div>
                 <label class="block text-xs text-gray-400 mb-1">SSH Password</label>
                 <input type="password" formControlName="jumpPassword" class="glass-input w-full" placeholder="••••••••">
+              </div>
+            </div>
+          </div>
+
+          <!-- KubeConfig Section -->
+          <div *ngIf="globalConnectionType === 'KUBECONFIG'" class="space-y-6 animate-fade-in">
+            <div>
+              <label class="block text-sm text-gray-400 mb-2">Upload KubeConfig</label>
+              <div class="relative group">
+                <input type="file" (change)="onFileSelected($event, 'cluster2')" 
+                       class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                <div class="glass-card p-8 border-2 border-dashed border-white/10 group-hover:border-brand-500/50 transition-all flex flex-col items-center justify-center gap-4">
+                  <lucide-angular [img]="credentialsForm.get('cluster2.kubeconfig')?.value ? icons.FileCheck : icons.Upload" 
+                                 [class.text-green-500]="credentialsForm.get('cluster2.kubeconfig')?.value"
+                                 [class.text-brand-500]="!credentialsForm.get('cluster2.kubeconfig')?.value"
+                                 class="w-10 h-10"></lucide-angular>
+                  <div class="text-center">
+                    <p class="text-sm font-medium">{{credentialsForm.get('cluster2.kubeconfig')?.value ? 'File Loaded Successfully' : 'Click to upload or drag & drop'}}</p>
+                    <p class="text-xs text-gray-500 mt-1">YAML format supported</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
