@@ -4,23 +4,23 @@ import { Injectable } from '@angular/core';
 export class AuthStorageService {
 
   getUserId(): string {
-    return localStorage.getItem('userId') ?? 'anonymous';
+    return sessionStorage.getItem('userId') ?? 'anonymous';
   }
 
   setUserId(userId: string) {
-    localStorage.setItem('userId', userId);
+    sessionStorage.setItem('userId', userId);
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return sessionStorage.getItem('token');
   }
 
   setToken(token: string) {
-    localStorage.setItem('token', token);
+    sessionStorage.setItem('token', token);
   }
 
   clear() {
-    localStorage.removeItem('userId');
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('token');
   }
 }

@@ -20,7 +20,8 @@ export class SidebarComponent {
   ];
 
   onLogout() {
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userId');
     window.location.href = '/login';
   }
 }

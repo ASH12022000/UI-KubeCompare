@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from '../services/api.service';
 import { ToastrService } from 'ngx-toastr';
-import { LucideAngularModule, Database, Plus, Play, Trash2, Loader2, Clock, Server, X, CheckCircle } from 'lucide-angular';
+import { LucideAngularModule, Database, Plus, Play, Trash2, Loader2, Clock, Server, X, CheckCircle, Globe, Terminal, Upload, FileCheck } from 'lucide-angular';
 
 @Component({
   selector: 'app-baselines',
@@ -22,7 +22,7 @@ export class BaselinesComponent implements OnInit {
   conflict: { exists: boolean; existingId: string; existingName: string } | null = null;
 
   baselineForm: FormGroup;
-  readonly icons = { Database, Plus, Play, Trash2, Loader2, Clock, Server, X, CheckCircle };
+  readonly icons = { Database, Plus, Play, Trash2, Loader2, Clock, Server, X, CheckCircle, Globe, Terminal, Upload, FileCheck };
 
   constructor(
     private fb:     FormBuilder,
@@ -30,11 +30,15 @@ export class BaselinesComponent implements OnInit {
     private toastr: ToastrService
   ) {
     this.baselineForm = this.fb.group({
-      name:         ['', Validators.required],
-      jumpHost:     ['', Validators.required],
-      jumpUser:     ['', Validators.required],
-      jumpPassword: ['', Validators.required],
-      namespace:    ['default', Validators.required],
+      name:           ['', Validators.required],
+      connectionType: ['JUMP', Validators.required],
+      clusterUrl:     [''],
+      token:          [''],
+      jumpHost:       [''],
+      jumpUser:       [''],
+      jumpPassword:   [''],
+      kubeconfig:     [''],
+      namespace:      ['default', Validators.required],
       checks: this.fb.group({
         DEPLOYMENTS:     [true],
         CONFIGMAPS:      [true],
@@ -57,8 +61,24 @@ export class BaselinesComponent implements OnInit {
     });
   }
 
-  openForm()  { this.showForm = true;  this.conflict = null; this.baselineForm.reset({ namespace: 'default' }); }
+  openForm()  { this.showForm = true;  this.conflict = null; this.baselineForm.reset({ namespace: 'default', connectionType: 'JUMP' }); }
   closeForm() { this.showForm = false; this.conflict = null; }
+
+  setConnectionType(type: 'DIRECT' | 'JUMP' | 'KUBECONFIG') {
+    this.baselineForm.patchValue({ connectionType: type });
+  }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.baselineForm.patchValue({ kubeconfig: e.target.result });
+        this.toastr.info('Kubeconfig file loaded');
+      };
+      reader.readAsText(file);
+    }
+  }
 
   onSubmit(override = false) {
     if (this.baselineForm.invalid) { this.baselineForm.markAllAsTouched(); return; }
@@ -68,11 +88,14 @@ export class BaselinesComponent implements OnInit {
     const formVal = this.baselineForm.value;
     const checks  = Object.keys(formVal.checks).filter(k => formVal.checks[k]);
     const payload = {
-      name:         formVal.name,
-      namespace:    formVal.namespace,
-      jumpHost:     formVal.jumpHost,
-      jumpUser:     formVal.jumpUser,
-      jumpPassword: formVal.jumpPassword,
+      name:           formVal.name,
+      namespace:      formVal.namespace,
+      clusterUrl:     formVal.clusterUrl,
+      token:          formVal.token,
+      jumpHost:       formVal.jumpHost,
+      jumpUser:       formVal.jumpUser,
+      jumpPassword:   formVal.jumpPassword,
+      kubeconfig:     formVal.kubeconfig,
       checks,
       override
     };

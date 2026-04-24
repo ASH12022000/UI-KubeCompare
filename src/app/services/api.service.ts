@@ -20,6 +20,10 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}/auth/verify`, data);
   }
 
+  validateToken(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/auth/validate`);
+  }
+
   // Settings / Profile
   getProfile(): Observable<any> {
     const userId = this.authStorage.getUserId();

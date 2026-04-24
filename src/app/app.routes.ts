@@ -42,11 +42,16 @@ export const routes: Routes = [
       {
         path: 'settings',
         loadComponent: () => import('./settings/settings.component').then(m => m.SettingsComponent)
+      },
+      {
+        path: '',
+        redirectTo: 'wizard',
+        pathMatch: 'full'
       }
     ]
   },
 
   // Default + fallback
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: '**', redirectTo: '/login' }
+  { path: '', redirectTo: '/wizard', pathMatch: 'full' },
+  { path: '**', redirectTo: '/wizard' }
 ];

@@ -40,7 +40,7 @@
       <thead>
         <tr class="bg-dark-800/50 border-b border-white/10 text-xs uppercase tracking-wider text-gray-400">
           <th class="p-4">Name</th>
-          <th class="p-4">Jump Host</th>
+          <th class="p-4">Connection</th>
           <th class="p-4">Namespace</th>
           <th class="p-4">Captured At</th>
           <th class="p-4 text-right">Actions</th>
@@ -131,27 +131,89 @@
         <p *ngIf="baselineForm.get('name')?.invalid && baselineForm.get('name')?.touched" class="text-xs text-red-400 mt-1">Name is required.</p>
       </div>
 
-      <div class="border-t border-white/10 pt-4">
-        <p class="text-xs uppercase tracking-widest text-gray-500 font-bold mb-4">Jump Server Details</p>
-        <div class="space-y-4">
+      <!-- Connection Type Selector -->
+      <div class="grid grid-cols-3 gap-2 bg-black/40 p-1.5 rounded-xl border border-white/5">
+        <button type="button" 
+                (click)="setConnectionType('DIRECT')"
+                [class.bg-brand-500]="baselineForm.get('connectionType')?.value === 'DIRECT'"
+                [class.text-white]="baselineForm.get('connectionType')?.value === 'DIRECT'"
+                class="flex flex-col items-center gap-1.5 py-3 px-1 rounded-lg transition-all text-gray-400 hover:text-white">
+          <lucide-angular [img]="icons.Globe" class="w-4 h-4"></lucide-angular>
+          <span class="text-[10px] font-bold uppercase tracking-wider">Direct</span>
+        </button>
+        <button type="button" 
+                (click)="setConnectionType('JUMP')"
+                [class.bg-brand-500]="baselineForm.get('connectionType')?.value === 'JUMP'"
+                [class.text-white]="baselineForm.get('connectionType')?.value === 'JUMP'"
+                class="flex flex-col items-center gap-1.5 py-3 px-1 rounded-lg transition-all text-gray-400 hover:text-white">
+          <lucide-angular [img]="icons.Terminal" class="w-4 h-4"></lucide-angular>
+          <span class="text-[10px] font-bold uppercase tracking-wider">Jump</span>
+        </button>
+        <button type="button" 
+                (click)="setConnectionType('KUBECONFIG')"
+                [class.bg-brand-500]="baselineForm.get('connectionType')?.value === 'KUBECONFIG'"
+                [class.text-white]="baselineForm.get('connectionType')?.value === 'KUBECONFIG'"
+                class="flex flex-col items-center gap-1.5 py-3 px-1 rounded-lg transition-all text-gray-400 hover:text-white">
+          <lucide-angular [img]="icons.Database" class="w-4 h-4"></lucide-angular>
+          <span class="text-[10px] font-bold uppercase tracking-wider">Config</span>
+        </button>
+      </div>
+
+      <!-- Direct URL Fields -->
+      <div *ngIf="baselineForm.get('connectionType')?.value === 'DIRECT'" class="space-y-4 animate-fade-in">
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">Cluster URL <span class="text-red-400">*</span></label>
+          <input type="text" formControlName="clusterUrl" class="glass-input w-full" placeholder="https://api.k8s.example.com">
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">Service Token <span class="text-red-400">*</span></label>
+          <input type="password" formControlName="token" class="glass-input w-full" placeholder="eyJhbGciOiJSUzI1NiIs...">
+        </div>
+      </div>
+
+      <!-- Jump Server Fields -->
+      <div *ngIf="baselineForm.get('connectionType')?.value === 'JUMP'" class="space-y-4 animate-fade-in">
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">Internal Cluster URL <span class="text-red-400">*</span></label>
+          <input type="text" formControlName="clusterUrl" class="glass-input w-full" placeholder="10.128.0.5">
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">Service Token <span class="text-red-400">*</span></label>
+          <input type="password" formControlName="token" class="glass-input w-full" placeholder="eyJhbGciOiJSUzI1NiIs...">
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">Jump Host <span class="text-red-400">*</span></label>
+          <input type="text" formControlName="jumpHost" class="glass-input w-full" placeholder="10.0.0.1">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm text-gray-400 mb-2">Jump Host <span class="text-red-400">*</span></label>
-            <input type="text" formControlName="jumpHost" class="glass-input w-full" placeholder="10.0.0.1">
-            <p *ngIf="baselineForm.get('jumpHost')?.invalid && baselineForm.get('jumpHost')?.touched" class="text-xs text-red-400 mt-1">Jump host is required.</p>
+            <label class="block text-sm text-gray-400 mb-2">SSH User <span class="text-red-400">*</span></label>
+            <input type="text" formControlName="jumpUser" class="glass-input w-full" placeholder="root">
           </div>
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm text-gray-400 mb-2">SSH User <span class="text-red-400">*</span></label>
-              <input type="text" formControlName="jumpUser" class="glass-input w-full" placeholder="root">
-              <p *ngIf="baselineForm.get('jumpUser')?.invalid && baselineForm.get('jumpUser')?.touched" class="text-xs text-red-400 mt-1">Required.</p>
-            </div>
-            <div>
-              <label class="block text-sm text-gray-400 mb-2">SSH Password <span class="text-red-400">*</span></label>
-              <input type="password" formControlName="jumpPassword" class="glass-input w-full" placeholder="••••••">
-              <p *ngIf="baselineForm.get('jumpPassword')?.invalid && baselineForm.get('jumpPassword')?.touched" class="text-xs text-red-400 mt-1">Required.</p>
-            </div>
+          <div>
+            <label class="block text-sm text-gray-400 mb-2">SSH Password <span class="text-red-400">*</span></label>
+            <input type="password" formControlName="jumpPassword" class="glass-input w-full" placeholder="••••••">
           </div>
         </div>
+      </div>
+
+      <!-- Kubeconfig Fields -->
+      <div *ngIf="baselineForm.get('connectionType')?.value === 'KUBECONFIG'" class="space-y-4 animate-fade-in">
+        <div class="p-6 border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center gap-3 bg-white/5 hover:bg-white/10 transition-all group relative">
+          <lucide-angular [img]="baselineForm.get('kubeconfig')?.value ? icons.FileCheck : icons.Upload" 
+                         [class.text-brand-500]="baselineForm.get('kubeconfig')?.value"
+                         class="w-10 h-10 text-gray-500 group-hover:text-brand-500 transition-colors"></lucide-angular>
+          <div class="text-center">
+            <p class="text-sm font-semibold text-white">
+              {{ baselineForm.get('kubeconfig')?.value ? 'Kubeconfig Loaded' : 'Upload Kubeconfig' }}
+            </p>
+            <p class="text-xs text-gray-500 mt-1">Select your .yaml or .conf file</p>
+          </div>
+          <input type="file" (change)="onFileSelected($event)" class="absolute inset-0 opacity-0 cursor-pointer">
+        </div>
+        <textarea formControlName="kubeconfig" 
+                  class="glass-input w-full h-32 text-[10px] font-mono leading-relaxed" 
+                  placeholder="Or paste kubeconfig content here..."></textarea>
       </div>
 
       <div class="border-t border-white/10 pt-4">
