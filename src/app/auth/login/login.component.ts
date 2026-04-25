@@ -7,6 +7,7 @@ import { AuthStorageService } from '../../services/auth-storage.service';
 import { ToastrService } from 'ngx-toastr';
 import { LucideAngularModule, LogIn, Mail, Lock, ShieldCheck } from 'lucide-angular';
 import { hashPassword } from '../../utils/hash.util';
+import { AuthRefreshService } from '../../services/auth-refresh.service';
 
 @Component({
   selector: 'app-login',
@@ -27,6 +28,7 @@ export class LoginComponent {
     private fb:          FormBuilder,
     private api:         ApiService,
     private authStorage: AuthStorageService,
+    private authRefresh: AuthRefreshService,
     private router:      Router,
     private toastr:      ToastrService
   ) {
@@ -49,9 +51,17 @@ export class LoginComponent {
 
     const hashedPwd = await hashPassword(this.loginForm.value.password);
     this.api.login({ email: this.loginForm.value.email, password: hashedPwd }).subscribe({
-      next: (res: { token: string; userId: string; email: string }) => {
+      next: (res: { token: string; refreshToken: string; expiresIn: number; userId: string; email: string }) => {
         this.authStorage.setToken(res.token);
+        if (res.refreshToken) {
+          this.authStorage.setRefreshToken(res.refreshToken);
+        }
+        if (res.expiresIn) {
+          const expiresAt = Date.now() + res.expiresIn;
+          this.authStorage.setExpiresAt(expiresAt);
+        }
         this.authStorage.setUserId(res.userId ?? res.email);
+        this.authRefresh.startRefreshTimer();
         this.isLoading = false;
         this.toastr.success('Welcome back!');
         this.router.navigate(['/wizard']);

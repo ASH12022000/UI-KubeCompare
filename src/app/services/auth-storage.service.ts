@@ -19,8 +19,27 @@ export class AuthStorageService {
     sessionStorage.setItem('token', token);
   }
 
+  getRefreshToken(): string | null {
+    return sessionStorage.getItem('refreshToken');
+  }
+
+  setRefreshToken(token: string) {
+    sessionStorage.setItem('refreshToken', token);
+  }
+
+  getExpiresAt(): number | null {
+    const val = sessionStorage.getItem('expiresAt');
+    return val ? parseInt(val, 10) : null;
+  }
+
+  setExpiresAt(expiresAt: number) {
+    sessionStorage.setItem('expiresAt', expiresAt.toString());
+  }
+
   clear() {
     sessionStorage.removeItem('userId');
     sessionStorage.removeItem('token');
+    sessionStorage.removeItem('refreshToken');
+    sessionStorage.removeItem('expiresAt');
   }
 }

@@ -16,6 +16,10 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}/auth/login`, credentials);
   }
 
+  refreshToken(refreshToken: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/auth/refresh`, { refreshToken });
+  }
+
   verifyOtp(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/auth/verify`, data);
   }
