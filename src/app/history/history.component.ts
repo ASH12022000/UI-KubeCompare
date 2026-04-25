@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../services/api.service';
 import { ToastrService } from 'ngx-toastr';
-import { LucideAngularModule, History, Download, Trash2, Loader2, Database, Clock } from 'lucide-angular';
+import { LucideAngularModule, History, Download, Trash2, Loader2, Database, Clock, X, CheckCircle } from 'lucide-angular';
 
 @Component({
   selector: 'app-history',
@@ -13,7 +13,8 @@ import { LucideAngularModule, History, Download, Trash2, Loader2, Database, Cloc
 export class HistoryComponent implements OnInit {
   isLoading = true;
   historyRecords: any[] = [];
-  readonly icons = { History, Download, Trash2, Loader2, Database, Clock };
+  deletingId: string | null = null;
+  readonly icons = { History, Download, Trash2, Loader2, Database, Clock, X, CheckCircle };
 
   constructor(
     private api:    ApiService,
@@ -47,11 +48,26 @@ export class HistoryComponent implements OnInit {
     });
   }
 
-  deleteRecord(id: string) {
-    if (!confirm('Are you sure you want to delete this record?')) return;
+  onDelete(id: string) {
+    this.deletingId = id;
+  }
+
+  cancelDelete() {
+    this.deletingId = null;
+  }
+
+  confirmDelete(id: string) {
     this.api.deleteHistory(id).subscribe({
-      next: () => { this.toastr.success('Record deleted'); this.fetchHistory(); },
-      error: () => this.toastr.error('Failed to delete record')
+      next: () => {
+        this.toastr.success('Record deleted');
+        this.deletingId = null;
+        this.fetchHistory();
+      },
+      error: (err) => {
+        console.error('Delete history failed', err);
+        this.toastr.error('Failed to delete record');
+        this.deletingId = null;
+      }
     });
   }
 }

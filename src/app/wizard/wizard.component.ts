@@ -99,9 +99,15 @@ export class WizardComponent {
 
   runComparison() {
     this.isLoading = true;
+    const mapEnv = (env: any) => ({
+      ...env,
+      clusterUrl: env.url,
+      encryptedToken: env.token
+    });
+
     const request = {
-      env1: this.credentialsForm.value.cluster1,
-      env2: this.credentialsForm.value.cluster2,
+      env1: mapEnv(this.credentialsForm.value.cluster1),
+      env2: mapEnv(this.credentialsForm.value.cluster2),
       ns1: this.scopeForm.value.ns1,
       ns2: this.scopeForm.value.ns2,
       checks: Object.keys(this.selectionForm.value).filter(key => this.selectionForm.value[key])

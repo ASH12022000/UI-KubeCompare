@@ -2,11 +2,14 @@ import { Component, Input, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as yaml from 'js-yaml';
 import { LucideAngularModule, Minus, Plus, RefreshCw } from 'lucide-angular';
+import * as Diff from 'diff';
 
 interface DiffLine {
   cluster1: string | null;
   cluster2: string | null;
-  match: boolean;
+  type: 'match' | 'added' | 'removed' | 'modified';
+  lineNumber1?: number;
+  lineNumber2?: number;
 }
 
 @Component({
@@ -28,22 +31,75 @@ export class DiffViewerComponent implements OnChanges {
   }
 
   generateDiff() {
+    if (!this.resource1 || !this.resource2) {
+      this.diffLines = [];
+      return;
+    }
+
     const yaml1 = yaml.dump(this.resource1);
     const yaml2 = yaml.dump(this.resource2);
     
-    const lines1 = yaml1.split('\n');
-    const lines2 = yaml2.split('\n');
-    const max = Math.max(lines1.length, lines2.length);
-    
+    const changes = Diff.diffLines(yaml1, yaml2);
     this.diffLines = [];
-    for (let i = 0; i < max; i++) {
-      const l1 = lines1[i] || null;
-      const l2 = lines2[i] || null;
-      this.diffLines.push({
-        cluster1: l1,
-        cluster2: l2,
-        match: l1 === l2
-      });
+    
+    let line1 = 1;
+    let line2 = 1;
+
+    // We process changes to build a balanced side-by-side view
+    for (let i = 0; i < changes.length; i++) {
+      const change = changes[i];
+      const lines = change.value.split('\n');
+      if (lines[lines.length - 1] === '') lines.pop(); // Remove trailing empty line from split
+
+      if (change.added) {
+        // If it's an addition, we might want to see if it follows a removal to show "modified"
+        lines.forEach(l => {
+          this.diffLines.push({
+            cluster1: null,
+            cluster2: l,
+            type: 'added',
+            lineNumber2: line2++
+          });
+        });
+      } else if (change.removed) {
+        // If it's a removal, check if next is an addition to align them
+        const nextChange = changes[i + 1];
+        if (nextChange && nextChange.added) {
+          const nextLines = nextChange.value.split('\n');
+          if (nextLines[nextLines.length - 1] === '') nextLines.pop();
+          
+          const max = Math.max(lines.length, nextLines.length);
+          for (let j = 0; j < max; j++) {
+            this.diffLines.push({
+              cluster1: lines[j] || null,
+              cluster2: nextLines[j] || null,
+              type: 'modified',
+              lineNumber1: lines[j] !== undefined ? line1++ : undefined,
+              lineNumber2: nextLines[j] !== undefined ? line2++ : undefined
+            });
+          }
+          i++; // Skip the next addition as we handled it
+        } else {
+          lines.forEach(l => {
+            this.diffLines.push({
+              cluster1: l,
+              cluster2: null,
+              type: 'removed',
+              lineNumber1: line1++
+            });
+          });
+        }
+      } else {
+        lines.forEach(l => {
+          this.diffLines.push({
+            cluster1: l,
+            cluster2: l,
+            type: 'match',
+            lineNumber1: line1++,
+            lineNumber2: line2++
+          });
+        });
+      }
     }
   }
 }

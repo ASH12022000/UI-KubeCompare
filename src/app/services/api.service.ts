@@ -69,6 +69,10 @@ export class ApiService {
   }
 
   // Baselines
+  getBaselineById(id: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/baselines/${id}`);
+  }
+
   getUserBaselines(): Observable<any[]> {
     const userId = this.authStorage.getUserId();
     return this.http.get<any[]>(`${this.baseUrl}/baselines/user/${userId}`);

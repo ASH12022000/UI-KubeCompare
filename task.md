@@ -16,6 +16,10 @@
 - [x] Implement "Golden Baseline" persistence.
 - [x] Implement Export System (Report generation).
 - [x] Implement History Management (Last 10 records).
+- [x] Implement null-safe string utility and update `BaselineController`
+- [x] Update `ComparisonController` with similar null-safety
+- [x] Fix null-safety and session leaks in `K8sClientFactory`
+- [x] Add null-safety to `BaselineService`
 
 ## Phase 4: Frontend Development
 - [x] Initialize Angular project with Tailwind CSS.
@@ -27,9 +31,24 @@
     - [x] Step 3: Resource selection.
     - [x] Step 4: Results Dashboard (Search/Filter, Diff Tables, YAML View).
 - [x] Integrate Export & Baseline actions.
+- [x] Update `BaselinesComponent` with dynamic validation logic
+- [x] Update `BaselinesComponent` HTML with error messages and indicators
+- [x] Fix `openForm` and `reset` behavior to avoid null fields
 
 ## Phase 5: Testing & Verification
 - [x] Verify Auth & Security flows.
 - [x] Verify K8s comparison results.
 - [x] Verify MongoDB persistence & history.
 - [x] Final UI/UX polish.
+
+## Phase 6: Expanded Baseline Features
+- [ ] Implement `@GetMapping("/{id}")` in `BaselineController` [/]
+- [ ] Add `updateBaseline` and `getBaselineById` to `ApiService` [ ]
+- [ ] Implement `onView` modal in `BaselinesComponent` [ ]
+- [ ] Implement `onRefresh` logic in `BaselinesComponent` [ ]
+- [ ] Integrate detailed comparison results view in `BaselinesComponent` [ ]
+
+## Phase 7: Verification
+- [ ] Verify View functionality [ ]
+- [ ] Verify Update/Refresh functionality [ ]
+- [ ] Verify Comparison results display [ ]

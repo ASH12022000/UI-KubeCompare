@@ -1,34 +1,61 @@
-<div class="glass-card overflow-hidden border-none">
+<div class="glass-card overflow-hidden border border-white/5 rounded-2xl shadow-2xl">
   <!-- Header -->
-  <div class="grid grid-cols-2 bg-white/5 border-b border-white/10">
-    <div class="p-4 flex items-center gap-2 border-r border-white/10">
-      <div class="w-2 h-2 rounded-full bg-brand-500"></div>
-      <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Cluster 1 Specification</span>
+  <div class="grid grid-cols-2 bg-dark-800/80 border-b border-white/10 backdrop-blur-md">
+    <div class="p-3 flex items-center justify-between border-r border-white/10">
+      <div class="flex items-center gap-2">
+        <div class="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></div>
+        <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Baseline (Expected)</span>
+      </div>
+      <lucide-angular [img]="icons.Minus" class="w-3 h-3 text-red-500/50"></lucide-angular>
     </div>
-    <div class="p-4 flex items-center gap-2">
-      <div class="w-2 h-2 rounded-full bg-green-500"></div>
-      <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Cluster 2 Specification</span>
+    <div class="p-3 flex items-center justify-between bg-brand-500/5">
+      <div class="flex items-center gap-2">
+        <div class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></div>
+        <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Live Cluster (Current)</span>
+      </div>
+      <lucide-angular [img]="icons.Plus" class="w-3 h-3 text-green-500/50"></lucide-angular>
     </div>
   </div>
 
   <!-- Diff Content -->
-  <div class="max-h-[600px] overflow-auto font-mono text-[13px] leading-relaxed custom-scrollbar">
+  <div class="max-h-[600px] overflow-auto font-mono text-[12px] leading-relaxed custom-scrollbar bg-dark-900/50">
     <div *ngFor="let line of diffLines" 
-         class="grid grid-cols-2 border-b border-white/5 group hover:bg-white/5 transition-colors">
+         class="grid grid-cols-2 border-b border-white/[0.02] group transition-colors">
       
-      <!-- Left Side -->
-      <div class="p-1 px-4 border-r border-white/10 whitespace-pre overflow-hidden text-ellipsis"
-           [ngClass]="{'bg-red-500/10 text-red-300': !line.match && line.cluster1}">
-        <span class="text-gray-600 inline-block w-8 select-none text-right mr-4">{{diffLines.indexOf(line) + 1}}</span>
-        {{line.cluster1 || ' '}}
+      <!-- Left Side (Baseline) -->
+      <div class="p-0.5 flex border-r border-white/10 overflow-hidden"
+           [ngClass]="{
+             'bg-red-500/10 text-red-200': line.type === 'removed' || (line.type === 'modified' && line.cluster1 !== line.cluster2),
+             'opacity-50': line.type === 'added'
+           }">
+        <span class="text-gray-600 inline-block w-10 select-none text-right mr-3 py-0.5 bg-black/20 border-r border-white/5">{{line.lineNumber1 || ' '}}</span>
+        <span class="mr-2 text-red-500/40 select-none w-3">{{line.type === 'removed' ? '-' : (line.type === 'modified' ? '~' : ' ')}}</span>
+        <span class="whitespace-pre flex-1">{{line.cluster1 || ' '}}</span>
       </div>
 
-      <!-- Right Side -->
-      <div class="p-1 px-4 whitespace-pre overflow-hidden text-ellipsis"
-           [ngClass]="{'bg-green-500/10 text-green-300': !line.match && line.cluster2}">
-        <span class="text-gray-600 inline-block w-8 select-none text-right mr-4">{{diffLines.indexOf(line) + 1}}</span>
-        {{line.cluster2 || ' '}}
+      <!-- Right Side (Live) -->
+      <div class="p-0.5 flex overflow-hidden"
+           [ngClass]="{
+             'bg-green-500/10 text-green-200': line.type === 'added' || (line.type === 'modified' && line.cluster1 !== line.cluster2),
+             'opacity-50': line.type === 'removed'
+           }">
+        <span class="text-gray-600 inline-block w-10 select-none text-right mr-3 py-0.5 bg-black/20 border-r border-white/5">{{line.lineNumber2 || ' '}}</span>
+        <span class="mr-2 text-green-500/40 select-none w-3">{{line.type === 'added' ? '+' : (line.type === 'modified' ? '~' : ' ')}}</span>
+        <span class="whitespace-pre flex-1">{{line.cluster2 || ' '}}</span>
       </div>
+    </div>
+  </div>
+  
+  <!-- Footer Info -->
+  <div class="p-3 bg-dark-800/80 border-t border-white/10 flex items-center justify-center gap-6 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+    <div class="flex items-center gap-2">
+      <span class="w-2 h-2 rounded bg-red-500/20 border border-red-500/40"></span> Removed
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="w-2 h-2 rounded bg-green-500/20 border border-green-500/40"></span> Added
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="w-2 h-2 rounded bg-yellow-500/20 border border-yellow-500/40"></span> Modified
     </div>
   </div>
 </div>

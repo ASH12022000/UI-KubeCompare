@@ -36,7 +36,7 @@
         </div>
       </div>
       
-      <form [formGroup]="credentialsForm" class="grid grid-cols-2 gap-10">
+      <form [formGroup]="credentialsForm" class="grid grid-cols-2 gap-10" autocomplete="off">
         <!-- Cluster 1 -->
         <div formGroupName="cluster1" class="space-y-6">
           <h3 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Primary Cluster</h3>
@@ -45,11 +45,11 @@
           <div *ngIf="globalConnectionType === 'DIRECT'" class="space-y-6 animate-fade-in">
             <div>
               <label class="block text-sm text-gray-400 mb-2">API Server URL</label>
-              <input type="text" formControlName="url" class="glass-input w-full" placeholder="https://k8s.api.endpoint">
+              <input type="text" formControlName="url" class="glass-input w-full" placeholder="https://k8s.api.endpoint" autocomplete="off">
             </div>
             <div>
               <label class="block text-sm text-gray-400 mb-2">Service Account Token</label>
-              <input type="password" formControlName="token" class="glass-input w-full" placeholder="eyJhbGciOiJSUzI1NiI...">
+              <input type="password" formControlName="token" class="glass-input w-full" placeholder="eyJhbGciOiJSUzI1NiI..." autocomplete="new-password">
             </div>
           </div>
 
@@ -57,16 +57,16 @@
           <div *ngIf="globalConnectionType === 'JUMP'" class="space-y-6 animate-fade-in">
             <div>
               <label class="block text-sm text-gray-400 mb-2">Jump Host</label>
-              <input type="text" formControlName="jumpHost" class="glass-input w-full" placeholder="10.0.0.1">
+              <input type="text" formControlName="jumpHost" class="glass-input w-full" placeholder="10.0.0.1" autocomplete="off">
             </div>
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="block text-xs text-gray-400 mb-1">SSH User</label>
-                <input type="text" formControlName="jumpUser" class="glass-input w-full" placeholder="root">
+                <input type="text" formControlName="jumpUser" class="glass-input w-full" placeholder="root" autocomplete="off">
               </div>
               <div>
                 <label class="block text-xs text-gray-400 mb-1">SSH Password</label>
-                <input type="password" formControlName="jumpPassword" class="glass-input w-full" placeholder="••••••••">
+                <input type="password" formControlName="jumpPassword" class="glass-input w-full" placeholder="••••••••" autocomplete="new-password">
               </div>
             </div>
           </div>
@@ -101,11 +101,11 @@
           <div *ngIf="globalConnectionType === 'DIRECT'" class="space-y-6 animate-fade-in">
             <div>
               <label class="block text-sm text-gray-400 mb-2">API Server URL</label>
-              <input type="text" formControlName="url" class="glass-input w-full" placeholder="https://k8s.api.endpoint">
+              <input type="text" formControlName="url" class="glass-input w-full" placeholder="https://k8s.api.endpoint" autocomplete="off">
             </div>
             <div>
               <label class="block text-sm text-gray-400 mb-2">Service Account Token</label>
-              <input type="password" formControlName="token" class="glass-input w-full" placeholder="eyJhbGciOiJSUzI1NiI...">
+              <input type="password" formControlName="token" class="glass-input w-full" placeholder="eyJhbGciOiJSUzI1NiI..." autocomplete="new-password">
             </div>
           </div>
 
@@ -113,16 +113,16 @@
           <div *ngIf="globalConnectionType === 'JUMP'" class="space-y-6 animate-fade-in">
             <div>
               <label class="block text-sm text-gray-400 mb-2">Jump Host</label>
-              <input type="text" formControlName="jumpHost" class="glass-input w-full" placeholder="10.0.0.1">
+              <input type="text" formControlName="jumpHost" class="glass-input w-full" placeholder="10.0.0.1" autocomplete="off">
             </div>
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="block text-xs text-gray-400 mb-1">SSH User</label>
-                <input type="text" formControlName="jumpUser" class="glass-input w-full" placeholder="root">
+                <input type="text" formControlName="jumpUser" class="glass-input w-full" placeholder="root" autocomplete="off">
               </div>
               <div>
                 <label class="block text-xs text-gray-400 mb-1">SSH Password</label>
-                <input type="password" formControlName="jumpPassword" class="glass-input w-full" placeholder="••••••••">
+                <input type="password" formControlName="jumpPassword" class="glass-input w-full" placeholder="••••••••" autocomplete="new-password">
               </div>
             </div>
           </div>

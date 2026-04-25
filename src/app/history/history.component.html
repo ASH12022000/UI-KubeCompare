@@ -72,13 +72,33 @@
               </span>
             </td>
             <td class="p-4">
-              <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button (click)="exportReport(record.id)" class="p-2 rounded-lg bg-brand-500/10 text-brand-500 hover:bg-brand-500 hover:text-white transition-all tooltip" title="Export PDF">
-                  <lucide-angular [img]="icons.Download" class="w-4 h-4"></lucide-angular>
-                </button>
-                <button (click)="deleteRecord(record.id)" class="p-2 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all tooltip" title="Delete">
-                  <lucide-angular [img]="icons.Trash2" class="w-4 h-4"></lucide-angular>
-                </button>
+              <div class="flex items-center justify-end gap-2">
+                <!-- Regular Actions -->
+                <ng-container *ngIf="deletingId !== record.id">
+                  <button (click)="exportReport(record.id)" 
+                          class="p-2 rounded-lg bg-brand-500/10 text-brand-500 hover:bg-brand-500 hover:text-white transition-all group-hover:opacity-100" 
+                          title="Export PDF">
+                    <lucide-angular [img]="icons.Download" class="w-4 h-4"></lucide-angular>
+                  </button>
+                  <button (click)="onDelete(record.id)" 
+                          class="p-2 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all group-hover:opacity-100" 
+                          title="Delete">
+                    <lucide-angular [img]="icons.Trash2" class="w-4 h-4"></lucide-angular>
+                  </button>
+                </ng-container>
+
+                <!-- Delete Confirmation -->
+                <ng-container *ngIf="deletingId === record.id">
+                  <span class="text-[10px] font-bold text-red-400 uppercase tracking-tighter mr-1 animate-pulse whitespace-nowrap">Confirm?</span>
+                  <button (click)="confirmDelete(record.id)"
+                          class="p-1.5 rounded bg-red-500 text-white hover:bg-red-600 transition-all text-[10px] font-bold">
+                    Delete
+                  </button>
+                  <button (click)="cancelDelete()"
+                          class="p-1.5 rounded bg-white/10 text-gray-300 hover:bg-white/20 transition-all text-[10px] font-semibold">
+                    No
+                  </button>
+                </ng-container>
               </div>
             </td>
           </tr>
